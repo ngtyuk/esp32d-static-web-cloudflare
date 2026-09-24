@@ -3,54 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#07111f" />
-    <title>ESP-32D Static Site</title>
+    <title>ESP-32D</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <main class="shell">
-      <div class="eyebrow">ESP-32D / STATIC WEB</div>
-      <section class="hero">
-        <div>
-          <p class="status"><span class="status-dot"></span> DEVICE ONLINE</p>
-          <h1>小さなデバイスから、<br /><em>ちゃんと届く。</em></h1>
-          <p class="lede">
-            このページはESP-32Dのフラッシュに保存され、Wi‑Fi経由でデバイス自身から配信されています。
-          </p>
-          <div class="actions">
-            <a class="button button-primary" href="#status">デバイス状態を見る</a>
-            <a class="button button-ghost" href="https://developers.cloudflare.com/tunnel/" target="_blank" rel="noreferrer">Cloudflare Tunnel</a>
-          </div>
-        </div>
-        <div class="orb" aria-hidden="true">
-          <div class="orb-ring orb-ring-one"></div>
-          <div class="orb-ring orb-ring-two"></div>
-          <div class="orb-core">32<br /><span>D</span></div>
-        </div>
-      </section>
+    <main>
+      <h1>ESP-32D</h1>
+      <p>静的サイト</p>
 
-      <section id="status" class="status-card" aria-live="polite">
-        <div class="card-heading">
-          <div>
-            <div class="eyebrow">LIVE TELEMETRY</div>
-            <h2>デバイス状態</h2>
-          </div>
-          <span id="health-badge" class="badge">CHECKING</span>
-        </div>
-        <div class="metrics">
-          <div class="metric"><span>ホスト名</span><strong id="hostname">—</strong></div>
-          <div class="metric"><span>IPアドレス</span><strong id="ip">—</strong></div>
-          <div class="metric"><span>稼働時間</span><strong id="uptime">—</strong></div>
-          <div class="metric"><span>更新日時</span><strong id="updated">—</strong></div>
-        </div>
-        <p id="health-message" class="health-message">デバイスから状態を取得しています…</p>
-      </section>
+      <hr />
 
-      <footer>
-        <span>Built for ESP-32D</span>
-        <span>·</span>
-        <span>Served from device flash</span>
-      </footer>
+      <h2>デバイス状態</h2>
+      <table>
+        <tbody>
+          <tr><th>状態</th><td id="health-badge">確認中</td></tr>
+          <tr><th>ホスト名</th><td id="hostname">—</td></tr>
+          <tr><th>IPアドレス</th><td id="ip">—</td></tr>
+          <tr><th>稼働時間</th><td id="uptime">—</td></tr>
+          <tr><th>更新日時</th><td id="updated">—</td></tr>
+        </tbody>
+      </table>
+      <p id="health-message">デバイスの状態を取得しています。</p>
     </main>
     <script src="/app.js"></script>
   </body>

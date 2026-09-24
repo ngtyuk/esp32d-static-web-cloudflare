@@ -25,13 +25,11 @@ async function refreshHealth() {
     fields.ip.textContent = data.ip || '—';
     fields.uptime.textContent = formatUptime(data.uptime);
     fields.updated.textContent = new Date().toLocaleTimeString('ja-JP');
-    badge.textContent = 'HEALTHY';
-    message.textContent = 'ESP-32Dから最新の状態を取得しました。';
-    badge.classList.remove('error');
+    badge.textContent = '正常';
+    message.textContent = '正常に取得しました。';
   } catch (error) {
-    badge.textContent = 'OFFLINE';
-    badge.classList.add('error');
-    message.textContent = 'デバイス状態を取得できません。ネットワーク接続を確認してください。';
+    badge.textContent = '取得失敗';
+    message.textContent = 'デバイスの状態を取得できません。';
   }
 }
 

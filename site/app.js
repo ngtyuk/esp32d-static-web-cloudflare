@@ -1,1 +1,66 @@
-m«ëˆ§½©buªàºg§¶È­{ö©¦;±¨m«ë€İ…¹îš(§~)^¢‹­~)^mºŞjFëy©ÊyÚ.¶›­º˜§¶‰bë(~W§‚Øgº`İuç(uç^r‡^Šzn¶^–—b²™ZÊØb²g¬±¨Š)éºØ§¦ë_ŠWyö®–×è®Ë]Šz(ºÚn¶‹­¦ë_ŠWyö®–×è®Ë]¢ë
+const askButton = document.querySelector('#ask-button');
+const askMessage = document.querySelector('#ask-message');
+const askedAtElement = document.querySelector('#asked-at');
+const answeredAtElement = document.querySelector('#answered-at');
+
+let waitingForAnswer = false;
+let answerMessage = '';
+let askedAt = null;
+let answeredAt = null;
+let statusRequestInFlight = false;
+
+function formatDate(value) {
+  return value ? new Date(value).toLocaleString('ja-JP') : 'â€”';
+}
+
+function updateUi() {
+  askButton.disabled = waitingForAnswer;
+  askButton.textContent = waitingForAnswer ? 'èã„ã¦ã„ã¾ã™...' : 'å…ƒæ°—ï¼Ÿ';
+  askMessage.textContent = waitingForAnswer
+    ? 'å…ƒæ°—ã‹ã©ã†ã‹èã„ã¦ã„ã¾ã™...'
+    : answerMessage || 'ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ã¦ESP32ã«èã„ã¦ãã ã•ã„ã€‚';
+  askedAtElement.textContent = formatDate(askedAt);
+  answeredAtElement.textContent = formatDate(answeredAt);
+}
+
+async function loadStatus() {
+  if (statusRequestInFlight) return;
+  statusRequestInFlight = true;
+
+  try {
+    const response = await fetch('/api/status', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    waitingForAnswer = data.state === 'waiting';
+    answerMessage = data.state === 'answered' ? 'å…ƒæ°—ï¼' : '';
+    askedAt = data.askedAt;
+    answeredAt = data.answeredAt;
+    updateUi();
+  } catch (error) {
+    askMessage.textContent = 'ESP32ã®çŠ¶æ…‹ã‚’å–å¾—ã§ãã¾ã›ã‚“ã€‚';
+  } finally {
+    statusRequestInFlight = false;
+  }
+}
+
+async function askEsp32() {
+  if (waitingForAnswer) return;
+
+  answerMessage = '';
+  waitingForAnswer = true;
+  updateUi();
+
+  try {
+    const response = await fetch('/api/ask', { method: 'POST', cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  } catch (error) {
+    waitingForAnswer = false;
+    answerMessage = 'ESP32ã«è³ªå•ã§ãã¾ã›ã‚“ã€‚';
+    updateUi();
+  }
+}
+
+askButton.addEventListener('click', askEsp32);
+updateUi();
+loadStatus();
+setInterval(loadStatus, 1000);

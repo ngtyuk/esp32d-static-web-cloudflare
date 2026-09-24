@@ -25,6 +25,7 @@ uint32_t nextBlinkAt = 0;
 const char kSetupPage[] PROGMEM = R"HTML(<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESP-32D Wi-Fi設定</title><style>body{font-family:system-ui,sans-serif;max-width:520px;margin:40px auto;padding:0 20px;background:#07111f;color:#eef6ff}main{border:1px solid #29415f;border-radius:18px;padding:24px;background:#0e1d31}input{display:block;width:100%;box-sizing:border-box;margin:8px 0 18px;padding:12px;border:1px solid #496685;border-radius:8px;background:#07111f;color:white}button{padding:12px 18px;border:0;border-radius:999px;background:#63e6f5;color:#07111f;font-weight:700}</style><main><h1>ESP-32D Wi-Fi設定</h1><p>接続先のWi-Fi情報を入力してください。保存後、ESP-32Dが再起動します。</p><form method="post" action="/save"><label>Wi-Fi SSID<input name="ssid" required autocomplete="off"></label><label>パスワード<input name="password" type="password" autocomplete="off"></label><button type="submit">保存して接続</button></form></main></html>)HTML";
 
 void sendAsset(const char* contentType, const char* body) {
+  server.sendHeader("Cache-Control", "no-store, max-age=0");
   server.send_P(200, contentType, body);
 }
 
@@ -36,6 +37,7 @@ void handleHealth() {
   json += "\",\"uptime\":";
   json += String(millis() / 1000);
   json += "}";
+  server.sendHeader("Cache-Control", "no-store, max-age=0");
   server.send(200, "application/json; charset=utf-8", json);
 }
 
@@ -70,6 +72,7 @@ void handleLedGet() {
   json += ",\"blinking\":";
   json += ledBlinking ? "true" : "false";
   json += "}";
+  server.sendHeader("Cache-Control", "no-store, max-age=0");
   server.send(200, "application/json; charset=utf-8", json);
 }
 

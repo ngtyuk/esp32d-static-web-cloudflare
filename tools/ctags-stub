@@ -1,0 +1,4 @@
+#!/bin/sh
+# The ESP-32D sketch has explicit function definitions, so Arduino's
+# automatic prototype generation is not needed for this project.
+exit 0

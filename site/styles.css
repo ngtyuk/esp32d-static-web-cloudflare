@@ -1,0 +1,68 @@
+:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --panel: rgba(14, 29, 49, 0.78);
+  --line: rgba(153, 197, 255, 0.18);
+  --text: #eef6ff;
+  --muted: #9eb3ca;
+  --cyan: #63e6f5;
+  --blue: #6d8cff;
+  --green: #78efba;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at 76% 15%, rgba(63, 116, 255, 0.18), transparent 29rem),
+    radial-gradient(circle at 13% 82%, rgba(34, 210, 202, 0.1), transparent 25rem),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.shell { max-width: 1080px; margin: 0 auto; padding: 40px 28px 28px; }
+.eyebrow { color: var(--cyan); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.18em; }
+
+.hero { min-height: 560px; display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: 50px; }
+.status { display: inline-flex; align-items: center; gap: 9px; color: var(--green); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.14em; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 18px var(--green); }
+h1 { max-width: 650px; margin: 18px 0; font-size: clamp(3.2rem, 7vw, 6.2rem); line-height: 0.98; letter-spacing: -0.07em; }
+h1 em { color: var(--cyan); font-style: normal; }
+.lede { max-width: 560px; color: var(--muted); font-size: 1.08rem; line-height: 1.8; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.button { border: 1px solid var(--line); border-radius: 999px; padding: 13px 19px; color: var(--text); text-decoration: none; font-weight: 700; transition: transform 160ms ease, border-color 160ms ease, background 160ms ease; }
+.button:hover { transform: translateY(-2px); border-color: rgba(99, 230, 245, 0.65); }
+.button-primary { border-color: transparent; background: linear-gradient(100deg, #3fcad8, #6379ff); color: #06101d; }
+.button-ghost { background: rgba(255, 255, 255, 0.04); }
+
+.orb { position: relative; justify-self: center; width: min(35vw, 330px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 36% 28%, #b2fbff 0 3%, #4fd8e9 12%, #25469b 46%, #101d4b 69%, transparent 70%); box-shadow: 0 0 70px rgba(80, 194, 255, 0.28), inset -28px -24px 60px rgba(0, 0, 0, 0.36); }
+.orb::after { content: ""; position: absolute; inset: 8%; border-radius: 50%; border: 1px solid rgba(190, 247, 255, 0.25); }
+.orb-ring { position: absolute; border: 1px solid rgba(99, 230, 245, 0.5); border-radius: 50%; transform: rotate(-26deg); }
+.orb-ring-one { width: 132%; height: 44%; }
+.orb-ring-two { width: 145%; height: 31%; transform: rotate(57deg); border-color: rgba(109, 140, 255, 0.52); }
+.orb-core { position: relative; z-index: 1; text-align: center; color: #08182b; font-size: 3.4rem; font-weight: 900; line-height: 0.77; letter-spacing: -0.1em; text-shadow: 0 1px 1px rgba(255,255,255,.4); }
+.orb-core span { font-size: 1.8rem; letter-spacing: 0; }
+
+.status-card { border: 1px solid var(--line); border-radius: 24px; padding: 29px; background: var(--panel); backdrop-filter: blur(18px); box-shadow: 0 20px 60px rgba(0,0,0,.18); }
+.card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+h2 { margin: 9px 0 0; font-size: 1.8rem; letter-spacing: -0.04em; }
+.badge { border: 1px solid rgba(120, 239, 186, .35); border-radius: 999px; padding: 8px 12px; color: var(--green); font-size: .7rem; font-weight: 800; letter-spacing: .12em; }
+.badge.error { color: #ff9f9f; border-color: rgba(255, 159, 159, .35); }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 30px; }
+.metric { min-height: 86px; border-top: 1px solid var(--line); padding-top: 15px; }
+.metric span { display: block; margin-bottom: 8px; color: var(--muted); font-size: .8rem; }
+.metric strong { font-size: 1.08rem; overflow-wrap: anywhere; }
+.health-message { margin: 25px 0 0; color: var(--muted); font-size: .92rem; }
+footer { display: flex; gap: 10px; justify-content: center; margin-top: 26px; color: #70869f; font-size: .74rem; letter-spacing: .05em; }
+
+@media (max-width: 720px) {
+  .shell { padding: 28px 18px; }
+  .hero { min-height: auto; grid-template-columns: 1fr; gap: 46px; padding: 70px 0 90px; }
+  .orb { width: min(66vw, 280px); }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+}

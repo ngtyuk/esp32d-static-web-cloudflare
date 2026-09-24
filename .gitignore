@@ -1,0 +1,21 @@
+# Local build products and platform-specific toolchains
+work/
+*.tar.gz
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Dependencies and local configuration
+node_modules/
+.env
+.env.*
+!.env.example
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt

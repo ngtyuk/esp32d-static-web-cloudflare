@@ -14,9 +14,16 @@
 
       <hr />
 
-      <h2>LED</h2>
-      <button id="led-toggle" type="button">点滅</button>
-      <p id="led-message">ボタンを押すとLEDが3回点滅します。</p>
+      <h2>元気？</h2>
+      <button id="ask-button" type="button">元気？</button>
+      <p id="ask-message">ボタンを押してESP32に聞いてください。</p>
+
+      <dl>
+        <dt>質問した日時</dt>
+        <dd id="asked-at">—</dd>
+        <dt>「元気！」と答えた日時</dt>
+        <dd id="answered-at">—</dd>
+      </dl>
     </main>
     <script src="/app.js?v=20260924-1"></script>
   </body>

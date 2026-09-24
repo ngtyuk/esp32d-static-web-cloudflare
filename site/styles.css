@@ -50,7 +50,21 @@ button:disabled {
   opacity: 0.6;
 }
 
-#led-message {
+dl {
+  margin: 24px 0 0;
+}
+
+dt {
+  margin-top: 12px;
+  color: #555;
+  font-size: 14px;
+}
+
+dd {
+  margin: 2px 0 0;
+}
+
+#ask-message {
   margin-top: 10px;
   font-size: 14px;
 }

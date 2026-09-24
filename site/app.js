@@ -1,49 +1,73 @@
-const ledButton = document.querySelector('#led-toggle');
-const ledMessage = document.querySelector('#led-message');
-let ledBlinking = false;
+const askButton = document.querySelector('#ask-button');
+const askMessage = document.querySelector('#ask-message');
+const askedAtElement = document.querySelector('#asked-at');
+const answeredAtElement = document.querySelector('#answered-at');
 
-function updateLedUi() {
-  ledButton.disabled = ledBlinking;
-  ledButton.textContent = ledBlinking ? '点滅中' : '点滅';
-  ledMessage.textContent = ledBlinking
-    ? 'LEDが3回点滅しています。'
-    : 'ボタンを押すとLEDが3回点滅します。';
+let waitingForAnswer = false;
+let answerMessage = '';
+let askedAt = localStorage.getItem('esp32d-asked-at');
+let answeredAt = localStorage.getItem('esp32d-answered-at');
+
+function formatDate(value) {
+  return value ? new Date(value).toLocaleString('ja-JP') : '—';
 }
 
-async function refreshLed() {
+function updateUi() {
+  askButton.disabled = waitingForAnswer;
+  askButton.textContent = waitingForAnswer ? '聞いています...' : '元気？';
+  askMessage.textContent = waitingForAnswer
+    ? '元気かどうか聞いています...'
+    : answerMessage || 'ボタンを押してESP32に聞いてください。';
+  askedAtElement.textContent = formatDate(askedAt);
+  answeredAtElement.textContent = formatDate(answeredAt);
+}
+
+async function loadStatus() {
   try {
-    const response = await fetch('/api/led', { cache: 'no-store' });
+    const response = await fetch('/api/status', { cache: 'no-store' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    ledBlinking = Boolean(data.blinking);
-    updateLedUi();
+    waitingForAnswer = Boolean(data.waiting);
+    updateUi();
   } catch (error) {
-    ledButton.textContent = '操作できません';
-    ledMessage.textContent = 'LEDの状態を取得できません。';
+    askMessage.textContent = 'ESP32の状態を取得できません。';
   }
 }
 
-async function toggleLed() {
-  ledButton.disabled = true;
+async function askEsp32() {
+  if (waitingForAnswer) return;
+
+  askedAt = new Date().toISOString();
+  answeredAt = null;
+  answerMessage = '';
+  localStorage.setItem('esp32d-asked-at', askedAt);
+  localStorage.removeItem('esp32d-answered-at');
+  waitingForAnswer = true;
+  updateUi();
+
   try {
-    const response = await fetch('/api/led', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ state: 'blink' }),
-    });
+    const response = await fetch('/api/ask', { method: 'POST', cache: 'no-store' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    ledBlinking = Boolean(data.blinking);
-    updateLedUi();
   } catch (error) {
-    ledMessage.textContent = 'LEDを操作できません。';
-    ledButton.disabled = false;
-  } finally {
-    if (!ledBlinking) ledButton.disabled = false;
+    waitingForAnswer = false;
+    answerMessage = 'ESP32に質問できません。';
+    updateUi();
   }
 }
 
-ledButton.addEventListener('click', toggleLed);
+const events = new EventSource('/events');
+events.addEventListener('answer', (event) => {
+  const data = JSON.parse(event.data);
+  waitingForAnswer = false;
+  answerMessage = data.message || '元気！';
+  answeredAt = new Date().toISOString();
+  localStorage.setItem('esp32d-answered-at', answeredAt);
+  updateUi();
+});
+events.onerror = () => {
+  if (waitingForAnswer) askMessage.textContent = 'ESP32との接続を再試行しています...';
+};
 
-refreshLed();
-setInterval(refreshLed, 300);
+askButton.addEventListener('click', askEsp32);
+updateUi();
+loadStatus();

@@ -62,7 +62,13 @@ WindowsではESP32のシリアルポートが `/dev/cu...` ではなく `COM3` �
 scripts/flash.sh
 ```
 
-## 4. Cloudflare経由で外部公開する
+## 4. D2のLEDを操作する
+
+サイトの「点灯」ボタンを押すと、ESP-32DのD2（GPIO2）に接続されたLEDを点灯できます。もう一度押すと消灯します。
+
+サイトを更新した場合は、サイトの生成とファームウェアの書き込みをもう一度実行してください。
+
+## 5. Cloudflare経由で外部公開する
 
 ESP32とCloudflare Tunnelを実行するPCが同じLANに接続された状態で、ESP32のIPアドレスを指定します。
 

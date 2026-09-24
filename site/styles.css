@@ -35,34 +35,6 @@ hr {
   border-top: 1px solid #ccc;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 9px 8px;
-  border-top: 1px solid #ddd;
-  text-align: left;
-  vertical-align: top;
-}
-
-th {
-  width: 9em;
-  color: #555;
-  font-weight: 400;
-}
-
-td {
-  overflow-wrap: anywhere;
-}
-
-#health-message {
-  margin-top: 18px;
-  font-size: 14px;
-}
-
 button {
   padding: 7px 14px;
   border: 1px solid #999;

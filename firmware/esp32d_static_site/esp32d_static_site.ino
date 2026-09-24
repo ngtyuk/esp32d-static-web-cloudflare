@@ -10,12 +10,17 @@ constexpr char kApName[] = "ESP32D-Setup";
 constexpr char kApPassword[] = "esp32d-setup";
 constexpr char kHostname[] = "esp32d-web";
 constexpr uint8_t kLedPin = 2;  // D2 on the ESP32 Dev Module.
+constexpr uint8_t kBlinkTransitions = 6;
+constexpr uint32_t kBlinkIntervalMs = 180;
 constexpr uint32_t kWifiTimeoutMs = 15000;
 
 WebServer server(80);
 Preferences preferences;
 bool setupMode = false;
 bool ledOn = false;
+bool ledBlinking = false;
+uint8_t blinkTransitionsRemaining = 0;
+uint32_t nextBlinkAt = 0;
 
 const char kSetupPage[] PROGMEM = R"HTML(<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESP-32D Wi-Fi設定</title><style>body{font-family:system-ui,sans-serif;max-width:520px;margin:40px auto;padding:0 20px;background:#07111f;color:#eef6ff}main{border:1px solid #29415f;border-radius:18px;padding:24px;background:#0e1d31}input{display:block;width:100%;box-sizing:border-box;margin:8px 0 18px;padding:12px;border:1px solid #496685;border-radius:8px;background:#07111f;color:white}button{padding:12px 18px;border:0;border-radius:999px;background:#63e6f5;color:#07111f;font-weight:700}</style><main><h1>ESP-32D Wi-Fi設定</h1><p>接続先のWi-Fi情報を入力してください。保存後、ESP-32Dが再起動します。</p><form method="post" action="/save"><label>Wi-Fi SSID<input name="ssid" required autocomplete="off"></label><label>パスワード<input name="password" type="password" autocomplete="off"></label><button type="submit">保存して接続</button></form></main></html>)HTML";
 
@@ -39,17 +44,50 @@ void setLed(bool on) {
   digitalWrite(kLedPin, ledOn ? HIGH : LOW);
 }
 
+void startBlink() {
+  ledBlinking = true;
+  blinkTransitionsRemaining = kBlinkTransitions;
+  setLed(false);
+  nextBlinkAt = millis();
+}
+
+void updateBlink() {
+  if (!ledBlinking || millis() < nextBlinkAt) return;
+
+  setLed(!ledOn);
+  --blinkTransitionsRemaining;
+  if (blinkTransitionsRemaining == 0) {
+    ledBlinking = false;
+    setLed(false);
+    return;
+  }
+  nextBlinkAt = millis() + kBlinkIntervalMs;
+}
+
 void handleLedGet() {
-  server.send(200, "application/json; charset=utf-8", ledOn ? "{\"on\":true}" : "{\"on\":false}");
+  String json = "{\"on\":";
+  json += ledOn ? "true" : "false";
+  json += ",\"blinking\":";
+  json += ledBlinking ? "true" : "false";
+  json += "}";
+  server.send(200, "application/json; charset=utf-8", json);
 }
 
 void handleLedPost() {
   const String state = server.arg("state");
-  if (state == "on") setLed(true);
-  else if (state == "off") setLed(false);
-  else if (state == "toggle") setLed(!ledOn);
+  if (state == "blink") startBlink();
+  else if (state == "on") {
+    ledBlinking = false;
+    setLed(true);
+  } else if (state == "off") {
+    ledBlinking = false;
+    setLed(false);
+  } else if (state == "toggle") {
+    ledBlinking = false;
+    setLed(!ledOn);
+  }
   else {
-    server.send(400, "application/json; charset=utf-8", "{\"error\":\"state must be on, off, or toggle\"}");
+    server.send(400, "application/json; charset=utf-8", "{\"error\":\"state must be blink, on, off, or toggle\"}");
     return;
   }
   handleLedGet();
@@ -133,6 +171,7 @@ void setup() {
 }
 
 void loop() {
+  updateBlink();
   server.handleClient();
   delay(2);
 }

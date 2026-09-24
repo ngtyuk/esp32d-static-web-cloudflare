@@ -27,33 +27,6 @@ ESP32D_PORT=/dev/cu.wchusbserial110 scripts/flash.sh
 
 初回起動時は `ESP32D-Setup` というWi-Fiアクセスポイントが起動します。パスワードは `esp32d-setup`。そのWi-Fiに接続し、`http://192.168.4.1` を開いて家庭・オフィスのWi-Fi情報を保存してください。再起動後、シリアルログに表示されるIPアドレスでサイトへアクセスできます。
 
-## Windowsへ移行する場合
-
-Windows側のCodexでは、次のソースだけをコピーしてください。
-
-```text
-README.md
-site/
-firmware/
-scripts/
-tools/
-```
-
-`work/` はMac用のツールチェーンとビルドキャッシュなのでコピー不要です。Windows側でArduino CLI、Node.js、必要なら `cloudflared` をインストールした後、PowerShellで実行します。
-
-```powershell
-.\scripts\setup.ps1
-.\scripts\flash.ps1 -Port COM3
-```
-
-Cloudflare Tunnelのテスト公開:
-
-```powershell
-.\scripts\tunnel.ps1 -ESP32IP 192.168.1.42
-```
-
-WindowsではESP32のシリアルポートが `/dev/cu...` ではなく `COM3` のように表示されます。ポート番号は `arduino-cli board list` で確認できます。
-
 ## 3. サイトを更新する
 
 `site/index.html`、`site/styles.css`、`site/app.js` を編集して、もう一度書き込みます。
@@ -83,3 +56,7 @@ ESP32D_IP=192.168.1.42 scripts/tunnel.sh
 - ESP32とCloudflare Tunnelを実行するPCは、同じLAN上にいる必要があります。
 - ESP32のIPが変わらないように、ルーター側でDHCP予約を設定するのがおすすめです。
 - `ESP32D-Setup` の初期パスワードはサンプル値なので、運用時はファームウェア内の値を変更してください。
+
+## 使用したアイテム
+
+- [ESP-32D開発ボード（AliExpress）](https://ja.aliexpress.com/item/1005008503831020.html)
